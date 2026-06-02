@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CM2 Text generator</title>
+
+        <link rel="icon" type="image/svg" href="../../../assets/icon.svg">
+        <link rel="stylesheet" href="../../../assets/style.css">
+    </head>
+    <body>
+        <header class="options">
+            <div class="option">
+                <a href="../../../"><h2>Home</h2></a>
+            </div>
+            <div class="option">
+                <h1>CM2 Text generator</h1>
+            </div>
+            <div class="option">
+                <h2 id="last_update"></h2>
+            </div>
+        </header>
+        <main class="container">
+            <article class="item">     
+                <a href="../">
+                    Return
+                </a>
+
+                <textarea rows="15" id="input"></textarea>
+
+                <label>
+                    <input type="checkbox" id="aligned">Aligned to grid
+                </label>
+
+                <button onclick="copyString()">Click to copy CM2 string</button>
+            </article>
+        </main>
+        <script src="../cm2.js"></script>
+        <script>
+            function copyString() {
+
+                let text = document.getElementById("input").value;
+                let aligned = document.getElementById("aligned").checked;
+
+                let move = aligned ? 1 : 0.45;
+
+                let row = 0;
+                let col = 0;
+
+                for (let i = 0; i < text.length; i++) {
+
+                    let char = text[i]
+                    switch (char) {
+                        case "\n":
+                            row++;
+                            col = 0;
+                            break;
+                        case "\t":
+                            col += 1.8;
+                            break;
+                        case " ":
+                            col++;
+                            break;
+                        default:
+                            add("text", 0, col*move, col*0.001, row, char);
+                            col++;
+                            break;
+                    }                    
+                }
+
+                navigator.clipboard.writeText(getString());
+            }
+        </script>
+        <script src="../../../assets/misc.js"></script>
+        <script>
+            document.getElementById("last_update").textContent = last_update;
+        </script>
+    </body>
+</html>

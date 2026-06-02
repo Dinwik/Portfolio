@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mandelbrot set explorer</title>
+
+        <link rel="icon" type="image/svg" href="../../assets/icon.svg">
+        <link rel="stylesheet" href="../../assets/style.css">
+        <style>
+            canvas {
+                width: 85%;
+            }
+
+            #iterations {
+
+            }
+        </style>
+        <script>
+            window.location.href = "../../";
+        </script>
+    </head>
+    <body>
+        <header class="options">
+            <div class="option">
+                <a href="../../../"><h2>Home</h2></a>
+            </div>
+            <div class="option">
+                <h1>Mandelbrot set generator</h1>
+            </div>
+            <div class="option">
+                <h2 id="last_update"></h2>
+            </div>
+        </header>
+        <main class="container">
+            <article class="item">
+                
+                <a href="../../">
+                    Return
+                </a>
+
+                <labeL>
+                    Position:
+                    <input type="number" id="posx" min="-2" max="2" step="0.1" placeholder="X offset" value="0">
+                    <input type="number" id="posy" min="-2" max="2" step="0.1" placeholder="Y offset" value="0">
+                </labeL>
+                <label style="display: inline-flex; align-items: center; gap: 10px;">
+                    Max iterations:
+                    <input type="range" id="iter" min="5" max="1000" step="1" value="200">
+                    <div id="iterations"></div>
+                </label>
+                <canvas id="canvas"></canvas>
+            </article>
+        </main>
+        <script src="scripts/mandelbrot.js"></script>
+        <script src="scripts/input-handler.js"></script>
+        <script src="../../assets/misc.js"></script>
+        <script>
+            document.getElementById("last_update").textContent = last_update;
+        </script>
+    </body>
+</html>
