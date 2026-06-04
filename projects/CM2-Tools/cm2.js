@@ -188,6 +188,11 @@ function add(type, state, x, y, z, data, id) {
         data,
         id
     });
+
+    if (blocks.length >= 150000) {
+        throw new Error("Cannot place more than 150k blocks!");
+        alert("Cannot place more than 150k blocks!");
+    }
 }
 
 function connect(start, end) {
@@ -209,6 +214,11 @@ function connect(start, end) {
     connections.push({
         start, end
     });
+
+    if (blocks.length >= 75000) {
+        throw new Error("Cannot place more than 75k connections!");
+        alert("Cannot place more than 75k connections!");
+    }
 }
 
 function getString() {
