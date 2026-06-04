@@ -28,7 +28,7 @@
 
                 <textarea rows="15" id="input"></textarea>
 
-                <label>
+                <label title="Disable, if you are planning to move or copy the text in-game later.">
                     <input type="checkbox" id="aligned">Aligned to grid
                 </label>
 
@@ -38,6 +38,8 @@
         <script src="../cm2.js"></script>
         <script>
             function copyString() {
+
+                clear();
 
                 let text = document.getElementById("input").value;
                 let aligned = document.getElementById("aligned").checked;

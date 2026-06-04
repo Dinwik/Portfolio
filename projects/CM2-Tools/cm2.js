@@ -1,6 +1,11 @@
 let blocks = [];
 let connections = [];
 
+function clear() {
+    blocks = [];
+    connections = []
+}
+
 function round(num) {
     return Math.round((num + Number.EPSILON) * 1e12) / 1e12;
 }
@@ -14,6 +19,7 @@ function format(template, input) {
         input.pop();
 
     for (let i = 0; i < input.length; i++) {
+        // input[i] = Number(input[i]);
         if (input[i] == template[i])
             input[i] = "";
     }

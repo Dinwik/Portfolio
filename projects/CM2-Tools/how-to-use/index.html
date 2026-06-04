@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CM2 Tools - how to use</title>
+
+        <link rel="icon" type="image/svg" href="../../../assets/icon.svg">
+        <link rel="stylesheet" href="../../../assets/style.css">
+
+        <style>
+            img {
+                box-shadow: 0px 0px 15px #11141a;
+                height: auto;
+                max-width: 85%;
+            }
+
+            .options {
+                align-items: center;
+            }
+
+            .icon {
+                height: 1em;
+                width: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="options">
+            <div class="option">
+                <a href="../../../"><h2>Home</h2></a>
+            </div>
+            <div class="option">
+                <h1>CM2 Tools</h1>
+            </div>
+            <div class="option">
+                <h2 id="last_update"></h2>
+            </div>
+        </header>
+        <main class="container">
+            <article class="item">     
+                <a href="../">
+                    Return
+                </a>
+            </article>
+
+            <article class="item">
+                <h2>1. Choose options.</h2>
+                <div class="options">
+                    <div class="option" style="text-align: left; max-width: 50%;">
+                        Fill in all the necessary fields and copy the CM2 string. 
+                    </div>
+                    <div class="option" style="text-align: left; max-width: 50%;">
+                        <img src="assets/options.png" alt="Couldn't load image">
+                    </div>
+                </div>
+
+                <h2>2. Paste the string.</h2>
+                <div class="options">
+                    <div class="option" style="text-align: left; max-width: 50%;">
+                        <img src="assets/register-tool.png" alt="Couldn't load image"> 
+                    </div>
+                    <div class="option" style="text-align: left; max-width: 50%;">
+                        Enable the register tool (either by clicking the <img src="assets/register-tool-icon.png" class="icon">
+                        icon, or by pressing the F key)
+                    </div>
+                </div>
+
+                <h2>3. Paste the building.</h2>
+                
+                <label>
+                    Press T, Ctrl+V or click the <img src="assets/paste-tool-icon.png" class="icon"> icon to enable
+                    the paste tool and left click wherever you want to paste the building.
+                </label>
+                <img src="assets/pasted-building.png" alt="Couldn't load image">
+
+
+            </article>
+
+        </main>
+        <script src="../../../assets/misc.js"></script>
+        <script>
+            document.getElementById("last_update").textContent = last_update;
+        </script>
+    </body>
+</html>

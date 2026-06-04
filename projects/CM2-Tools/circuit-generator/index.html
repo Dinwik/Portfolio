@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CM2 Circuit generator</title>
+
+        <link rel="icon" type="image/svg" href="../../../assets/icon.svg">
+        <link rel="stylesheet" href="../../../assets/style.css">
+
+        <script src="../cm2.js"></script>
+        <script src="decoder.js"></script>
+        <script src="cla.js"></script>
+
+    </head>
+    <body>
+        <header class="options">
+            <div class="option">
+                <a href="../../../"><h2>Home</h2></a>
+            </div>
+            <div class="option">
+                <h1>CM2 Circuit generator</h1>
+            </div>
+            <div class="option">
+                <h2 id="last_update"></h2>
+            </div>
+        </header>
+        <main class="container">
+            <article class="item">     
+                <a href="../">
+                    Return
+                </a>
+
+                <label>Bits:<input type="number" id="bits" min="1" max="64" value="4"></label>
+
+                <label>
+                    Circuit:
+                    <select class="input" id="type">
+                        <option value="decoder">Decoder</option>
+                        <option value="cla">Carry Lookahead Adder</option>
+                    </select>
+                </label>
+
+                <button onclick="generate()">Click to copy CM2 string</button>
+            </article>
+        </main>
+        <script src="input-handler.js"></script>
+        <script>
+            function generate() {
+
+                let circuit = "???";
+
+                switch(document.getElementById("type").value) {
+
+                    case "decoder": circuit = decoder(bits.value);
+                    case "cla": circuit = cla(bits.value);
+                }
+
+                navigator.clipboard.writeText(circuit)
+            }
+        </script>
+        <script src="../../../assets/misc.js"></script>
+        <script>
+            document.getElementById("last_update").textContent = last_update;
+        </script>
+    </body>
+</html>

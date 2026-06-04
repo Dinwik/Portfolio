@@ -144,7 +144,7 @@ textarea {
     text-align: center;
 }
 
-input {
+input, .input {
     background-color: #0d1117;
     border: none;
     border-radius: 5px;
@@ -154,7 +154,7 @@ input {
     margin: 5px;
 }
 
-input:disabled {
+input:disabled, .input:disabled {
     background-color: #161b22;
     color: #484f58;
     cursor: not-allowed;
