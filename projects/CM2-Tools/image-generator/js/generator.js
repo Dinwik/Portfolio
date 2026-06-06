@@ -1,7 +1,7 @@
 function generate(res=1) {
     clear();
 
-    let size = 64;
+    let size = 16;
 
     const width = Math.floor(preview.width / res);
     const height = Math.floor(preview.height / res);
@@ -19,8 +19,8 @@ function generate(res=1) {
 
     let i = 0;
 
-    for (let x = 0; x < width; x++) {
-        for (let y = 0; y < height; y++) {
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
 
             const pixel = (x*res + imgData.width*y*res)*4
 
