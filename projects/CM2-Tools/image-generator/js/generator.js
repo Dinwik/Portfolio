@@ -35,7 +35,7 @@ function generate(res=1) {
             if (r != targetR || g != targetG || b != targetB) {
                 add("TILE", 0, x/size, height/size - y/size, 0.001*(x+y), [targetR, targetG, targetB, 2]);
 
-                if (blocks.length > maxBlocks.value) {
+                if (blocks.length > maxBlocks.value*1000) {
                     generate(res+1);
                     return;
                 }
