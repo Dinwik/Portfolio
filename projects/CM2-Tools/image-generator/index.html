@@ -9,6 +9,12 @@
         <link rel="stylesheet" href="../../../assets/style.css">
 
         <script src="../cm2.js"></script>
+
+        <style>
+            .option {
+                flex-direction: column;
+            }
+        </style>
     </head>
     <body>
         <header class="options">
@@ -34,10 +40,24 @@
                     <canvas id="inputImage" height="0"></canvas>
                 </div>
 
+                <div class="options">
+                    <div class="option">
+                        Max blocks (in thousands):
+                        <input type="number" min="10" max="150" value="60" id="max">
+                    </div>
+                    <div class="option">
+                        <label title="Higher number ignores small color differences">
+                            Color tolerance:
+                            <input type="number" min="1" max="64" value="15" id="tolerance">
+                        </label>
+                    </div>
+                </div>
+
                 <label>
-                    Max blocks (in thousands):
-                    <input type="number" min="10" max="150" value="60" id="max">
+                    <input type="checkbox" id="vertical" checked="true">Vertical
                 </label>
+
+                
 
                 <button onclick="generate()">Click to copy CM2 string</button>
 

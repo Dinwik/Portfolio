@@ -13,9 +13,11 @@ function generate(res=1) {
     for (let x = 0; x < width; x++) {
         gen[x] = new Array(height);
         for (let y = 0; y < height; y++) {
-            gen[x][y] = [-1, -1, -1];
+            gen[x][y] = [-1000, -1000, -1000];
         }
     }
+
+    let i = 0;
 
     for (let x = 0; x < width; x++) {
         for (let y = 0; y < height; y++) {
@@ -31,8 +33,15 @@ function generate(res=1) {
             const g = gen[x][y][1];
             const b = gen[x][y][2];
 
-            if (r != targetR || g != targetG || b != targetB) {
-                add("TILE", 0, x/size, height/size - y/size, 0.001*(x+y), [targetR, targetG, targetB, 2]);
+            const diff = Math.sqrt(
+                Math.pow(r - targetR, 2) +
+                Math.pow(g - targetG, 2) +
+                Math.pow(b - targetB, 2)
+            );
+
+            if (diff > tolerance.value) {
+                if (vertical.checked) add("TILE", 0, x/size, height/size - y/size, 0.0001*(i), [targetR, targetG, targetB, 2]);
+                else add("TILE", 0, -x/size, 0.0001*(i), height/size - y/size, [targetR, targetG, targetB, 2]);
 
                 if (blocks.length > maxBlocks.value*1000) {
                     generate(res+1);
@@ -44,7 +53,7 @@ function generate(res=1) {
                         gen[X][Y] = [targetR, targetG, targetB];
                     }
                 }
-
+                i++;
             }
         }
     }
