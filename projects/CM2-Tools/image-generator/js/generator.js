@@ -41,7 +41,7 @@ function generate(res=1) {
 
             if (diff > tolerance.value) {
                 if (vertical.checked) add("TILE", 0, x/size, height/size - y/size, 0.0001*(i), [targetR, targetG, targetB, 2]);
-                else add("TILE", 0, -x/size, 0.0001*(i), height/size - y/size, [targetR, targetG, targetB, 4]);
+                else add("TILE", 0, -x/size, 0.0001*(i), height/size - y/size, [targetR, targetG, targetB, 2]);
 
                 if (blocks.length > maxBlocks.value*1000) {
                     generate(res+1);
