@@ -3,18 +3,12 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CM2 Circuit generator</title>
+        <title>CM2 Image generator</title>
 
         <link rel="icon" type="image/svg" href="../../../assets/icon.svg">
         <link rel="stylesheet" href="../../../assets/style.css">
 
         <script src="../cm2.js"></script>
-
-        <style>
-            #image {
-                display: none;
-            }
-        </style>
     </head>
     <body>
         <header class="options">
@@ -37,8 +31,13 @@
                 <div class="file_input" id="drop">
                     Drag & drop or click to select file
                     <input type="file" id="file_input" accept="image/*" style="display: none !important;">
-                    <canvas id="inputImage" hieght="0"></canvas>
+                    <canvas id="inputImage" height="0"></canvas>
                 </div>
+
+                <label>
+                    Max blocks (in thousands):
+                    <input type="number" min="10" max="150" value="60" id="max">
+                </label>
 
                 <button onclick="generate()">Click to copy CM2 string</button>
 
