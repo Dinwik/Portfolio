@@ -1,7 +1,7 @@
 function generate(res=1) {
     clear();
 
-    let size = 16;
+    let size = 8;
 
     const width = Math.floor(preview.width / res);
     const height = Math.floor(preview.height / res);
@@ -48,8 +48,8 @@ function generate(res=1) {
                     return;
                 }
                 
-                for (let X = x; X < Math.min(x+size, width-1); X++) {
-                    for (let Y = y; Y < Math.min(y+size, height-1); Y++) {
+                for (let X = x; X < Math.min(x+size, width); X++) {
+                    for (let Y = y; Y < Math.min(y+size, height); Y++) {
                         gen[X][Y] = [targetR, targetG, targetB];
                     }
                 }
