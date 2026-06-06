@@ -17,7 +17,6 @@ function generate(res=1) {
         }
     }
 
-
     for (let x = 0; x < width; x++) {
         for (let y = 0; y < height; y++) {
 

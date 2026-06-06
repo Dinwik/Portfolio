@@ -1,5 +1,7 @@
 function counter(bits) {
 
+    clear();
+
     let inc = add("NODE", 0, 1, 0, 1);
     add("TEXT", 0, 2, 0, 1, "+");
 
