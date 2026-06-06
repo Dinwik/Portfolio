@@ -13,6 +13,7 @@
         <script src="js/rca.js"></script>
         <script src="js/cla.js"></script>
         <script src="js/double-dabble.js"></script>
+        <script src="js/counter.js"></script>
 
     </head>
     <body>
@@ -42,6 +43,7 @@
                         <option value="rca">Ripple Carry Adder</option>
                         <option value="cla">Carry Lookahead Adder</option>
                         <option value="dd">Double dabble</option>
+                        <option value="counter">Counter</option>
                     </select>
                 </label>
 
@@ -68,14 +70,12 @@
                         circuit = dd(bits.value);
                         break;
                     case "rca": circuit = rca(bits.value); break;
+                    case "counter": circuit = counter(bits.value); break;
                 }
 
                 navigator.clipboard.writeText(circuit)
             }
         </script>
         <script src="../../../assets/misc.js"></script>
-        <script>
-            document.getElementById("last_update").textContent = last_update;
-        </script>
     </body>
 </html>

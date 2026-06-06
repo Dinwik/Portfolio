@@ -8,10 +8,12 @@
         <link rel="icon" type="image/svg" href="../../../assets/icon.svg">
         <link rel="stylesheet" href="../../../assets/style.css">
 
+        <script src="../cm2.js"></script>
+
         <style>
             #image {
                 display: none;
-            } 
+            }
         </style>
     </head>
     <body>
@@ -32,31 +34,18 @@
                     Return
                 </a>
 
-                <div class="file_input">
+                <div class="file_input" id="drop">
                     Drag & drop or click to select file
-                    <input type="file" id="image" accept="image/*">
+                    <input type="file" id="file_input" accept="image/*" style="display: none !important;">
+                    <canvas id="inputImage" hieght="0"></canvas>
                 </div>
+
+                <button onclick="generate()">Click to copy CM2 string</button>
 
             </article>
         </main>
-        <script>
-            const fileInput = document.getElementById("file-input");
-            const file = document.getElementById("file");
-            // const preview = documen
-
-            let currentFile = null;
-
-            file_input.addEventListener("click", (e) => {
-                handle
-            });
-
-            function changeFile(file) {
-                
-            }
-        </script>
+        <script src="js/input-handler.js"></script>
+        <script src="js/generator.js"></script>
         <script src="../../../assets/misc.js"></script>
-        <script>
-            document.getElementById("last_update").textContent = last_update;
-        </script>
-        </body>
+    </body>
 </html>

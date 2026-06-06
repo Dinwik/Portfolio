@@ -26,6 +26,8 @@
     border-radius: 8px;
 
     transition: background-color 0.1s, border-color 0.1s;
+
+    cursor: pointer;
 }
 
 .file_input:hover {
@@ -180,4 +182,11 @@ input:disabled, .input:disabled {
     .options {
         flex-direction: column;
     }
+}
+
+canvas {
+    max-width: 100%;
+    height: auto;
+    margin-top: 20px;
+    border-radius: 4px;
 }

@@ -19,7 +19,7 @@ function format(template, input=[]) {
         input.pop();
 
     for (let i = 0; i < input.length; i++) {
-        if (input[i] == template[i] || ~isNaN(input[i]))
+        if (input[i] == template[i] || isNaN(input[i]))
             input[i] = "";
     }
 
