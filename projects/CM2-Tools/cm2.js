@@ -10,7 +10,7 @@ function round(num) {
     return Math.round((num + Number.EPSILON) * 1e12) / 1e12;
 }
 
-function format(template, input) {
+function format(template, input=[]) {
 
     if (!Array.isArray(input))
         input = [input];
@@ -19,8 +19,7 @@ function format(template, input) {
         input.pop();
 
     for (let i = 0; i < input.length; i++) {
-        // input[i] = Number(input[i]);
-        if (input[i] == template[i])
+        if (input[i] == template[i] || ~isNaN(input[i]))
             input[i] = "";
     }
 
@@ -190,9 +189,11 @@ function add(type, state, x, y, z, data, id) {
     });
 
     if (blocks.length >= 150000) {
-        throw new Error("Cannot place more than 150k blocks!");
         alert("Cannot place more than 150k blocks!");
+        throw new Error("Cannot place more than 150k blocks!");
     }
+
+    return blocks.length;
 }
 
 function connect(start, end) {
@@ -215,9 +216,9 @@ function connect(start, end) {
         start, end
     });
 
-    if (blocks.length >= 75000) {
-        throw new Error("Cannot place more than 75k connections!");
+    if (connections.length >= 75000) {
         alert("Cannot place more than 75k connections!");
+        throw new Error("Cannot place more than 75k connections!");
     }
 }
 

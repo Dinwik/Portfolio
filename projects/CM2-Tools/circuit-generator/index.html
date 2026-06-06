@@ -9,8 +9,10 @@
         <link rel="stylesheet" href="../../../assets/style.css">
 
         <script src="../cm2.js"></script>
-        <script src="decoder.js"></script>
-        <script src="cla.js"></script>
+        <script src="js/decoder.js"></script>
+        <script src="js/rca.js"></script>
+        <script src="js/cla.js"></script>
+        <script src="js/double-dabble.js"></script>
 
     </head>
     <body>
@@ -26,7 +28,7 @@
             </div>
         </header>
         <main class="container">
-            <article class="item">     
+            <article class="item">
                 <a href="../">
                     Return
                 </a>
@@ -37,14 +39,16 @@
                     Circuit:
                     <select class="input" id="type">
                         <option value="decoder">Decoder</option>
+                        <option value="rca">Ripple Carry Adder</option>
                         <option value="cla">Carry Lookahead Adder</option>
+                        <option value="dd">Double dabble</option>
                     </select>
                 </label>
 
                 <button onclick="generate()">Click to copy CM2 string</button>
             </article>
         </main>
-        <script src="input-handler.js"></script>
+        <script src="js/input-handler.js"></script>
         <script>
             function generate() {
 
@@ -52,8 +56,18 @@
 
                 switch(document.getElementById("type").value) {
 
-                    case "decoder": circuit = decoder(bits.value);
-                    case "cla": circuit = cla(bits.value);
+                    case "decoder": circuit = decoder(bits.value); break;
+                    case "cla": circuit = cla(bits.value); break;
+                    case "dd":
+                        if (bits.value < 4) {
+                            bits.setCustomValidity("Bits must be greater than 3");
+                            bits.reportValidity();
+                            return;
+                        } else
+                            bits.setCustomValidity("");
+                        circuit = dd(bits.value);
+                        break;
+                    case "rca": circuit = rca(bits.value); break;
                 }
 
                 navigator.clipboard.writeText(circuit)
