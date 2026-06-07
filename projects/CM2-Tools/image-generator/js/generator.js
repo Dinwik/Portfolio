@@ -1,5 +1,10 @@
+const reducedID = document.getElementById("reduced");
+
 function generate(res=1) {
     clear();
+
+
+    let reduced = 0
 
     let size = 8;
 
@@ -54,9 +59,13 @@ function generate(res=1) {
                     }
                 }
                 i++;
+            } else {
+                reduced++;
             }
         }
     }
 
     navigator.clipboard.writeText(getString());
+
+    reducedID.innerText = `Reduced blocks: ${reduced}`;
 }

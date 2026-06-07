@@ -190,3 +190,9 @@ canvas {
     margin-top: 20px;
     border-radius: 4px;
 }
+
+input[type="color"] {
+    width: 60px;
+    height: 40px;
+    padding: 0;
+}
