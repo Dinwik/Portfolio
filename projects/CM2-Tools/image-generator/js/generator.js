@@ -1,15 +1,29 @@
 const reducedID = document.getElementById("reduced");
 
+function t(x) {
+    x /= 255
+    let r = (3*(1-x)**8+1)*x
+    return Math.floor(r*255);
+}
+
 function generate(res=1) {
     clear();
 
+    
 
     let reduced = 0
 
-    let size = 8;
-
     const width = Math.floor(preview.width / res);
     const height = Math.floor(preview.height / res);
+
+    let size = 8;
+
+    if (width*height < maxBlocks.value*250)
+        size = 2;
+    if (width*height < maxBlocks.value*125)
+        size = 1;
+    
+    
 
     const imgData = ictx.getImageData(0, 0, width*res, height*res);
     const pixels = imgData.data;
@@ -29,10 +43,14 @@ function generate(res=1) {
 
             const pixel = (x*res + imgData.width*y*res)*4
 
-            const targetR = pixels[pixel];
-            const targetG = pixels[pixel+1];
-            const targetB = pixels[pixel+2];
-            const targetA = pixels[pixel+3];
+            let targetR = pixels[pixel];
+            let targetG = pixels[pixel+1];
+            let targetB = pixels[pixel+2];
+
+            targetR = t(targetR);
+            targetG = t(targetG);
+            targetB = t(targetB);
+
 
             const r = gen[x][y][0];
             const g = gen[x][y][1];
