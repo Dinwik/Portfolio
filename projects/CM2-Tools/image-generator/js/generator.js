@@ -9,9 +9,7 @@ function t(x) {
 function generate(res=1) {
     clear();
 
-    
-
-    let reduced = 0
+    let reduced = 0;
 
     const width = Math.floor(preview.width / res);
     const height = Math.floor(preview.height / res);
@@ -63,7 +61,7 @@ function generate(res=1) {
             );
 
             if (diff > tolerance.value) {
-                if (vertical.checked) add("TILE", 0, x/size, height/size - y/size, 0.0001*(i), [targetR, targetG, targetB, 2]);
+                if (vertical.checked) add("TILE", 0, x/size, (height - y - size - 1)/size, 0.0001*(i), [targetR, targetG, targetB, 2]);
                 else add("TILE", 0, -x/size, 0.0001*(i), height/size - y/size, [targetR, targetG, targetB, 2]);
 
                 if (blocks.length > maxBlocks.value*1000) {
@@ -71,7 +69,7 @@ function generate(res=1) {
                     return;
                 }
                 
-                for (let X = x; X < Math.min(x+size, width); X++) {
+                for (let X = x; X < Math.min(x+size, width-1); X++) {
                     for (let Y = y; Y < Math.min(y+size, height); Y++) {
                         gen[X][Y] = [targetR, targetG, targetB];
                     }
