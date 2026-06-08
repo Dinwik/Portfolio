@@ -66,10 +66,6 @@
                 clear();
 
                 let text = input.value;
-                if (auto.checked) {
-                    const regex = /(.{1,180})(?:\s|$)/g;
-                    text = text.match(regex)?.join('\n').trim() || text;
-                }
 
                 const move = aligned.checked ? 1 : 0.45;
                 let row = 0;
@@ -98,7 +94,12 @@
                             }
                             col++;
                             break;
-                    }                    
+                    }
+                    
+                    if (auto.checked && col > 100) {
+                        row++;
+                        col = 0;
+                    }
                 }
 
                 navigator.clipboard.writeText(getString())
