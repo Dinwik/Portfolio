@@ -71,5 +71,5 @@ function cla(bits) {
         connect(`AND-${i}-${i+1}`, `COUT-${i}`);
     }
 
-    return getString();
+    getString();
 }

@@ -14,7 +14,6 @@
         <script src="js/cla.js"></script>
         <script src="js/double-dabble.js"></script>
         <script src="js/counter.js"></script>
-
     </head>
     <body>
         <header class="options">
@@ -48,18 +47,18 @@
                 </label>
 
                 <button onclick="generate()">Click to copy CM2 string</button>
+
+                <div id="copyfail"></div>
             </article>
         </main>
         <script src="js/input-handler.js"></script>
         <script>
             function generate() {
-
-                let circuit = "???";
-
+ 
                 switch(document.getElementById("type").value) {
 
-                    case "decoder": circuit = decoder(bits.value); break;
-                    case "cla": circuit = cla(bits.value); break;
+                    case "decoder": decoder(bits.value); break;
+                    case "cla": cla(bits.value); break;
                     case "dd":
                         if (bits.value < 4) {
                             bits.setCustomValidity("Bits must be greater than 3");
@@ -67,13 +66,11 @@
                             return;
                         } else
                             bits.setCustomValidity("");
-                        circuit = dd(bits.value);
+                        dd(bits.value);
                         break;
-                    case "rca": circuit = rca(bits.value); break;
-                    case "counter": circuit = counter(bits.value); break;
+                    case "rca": rca(bits.value); break;
+                    case "counter": counter(bits.value); break;
                 }
-
-                navigator.clipboard.writeText(circuit)
             }
         </script>
         <script src="../../../assets/misc.js"></script>

@@ -41,5 +41,5 @@ function rca(bits) {
     connect(c, `XOR2-0`);
     connect(c, `AND2-0`);
 
-    return getString();
+    getString();
 }

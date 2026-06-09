@@ -81,7 +81,7 @@ function generate(res=1) {
         }
     }
 
-    navigator.clipboard.writeText(getString());
+    getString();
 
     reducedID.innerText = `Reduced blocks: ${reduced}`;
 }

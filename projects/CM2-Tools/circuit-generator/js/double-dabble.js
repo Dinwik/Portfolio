@@ -168,5 +168,5 @@ function dd(bits) {
         x--;
     }
 
-    return getString();
+    getString();
 }

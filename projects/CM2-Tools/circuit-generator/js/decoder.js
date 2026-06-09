@@ -28,5 +28,5 @@ function decoder(bits) {
         }
     }
 
-    return getString();
+    getString();
 }

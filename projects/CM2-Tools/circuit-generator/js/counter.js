@@ -45,5 +45,5 @@ function counter(bits) {
         connect(and, tff)
     }
 
-    return getString();
+    getString();
 }

@@ -222,7 +222,10 @@ function connect(start, end) {
     }
 }
 
-function getString() {
+async function getString() {
+
+    const copyfail = document.getElementById("copyfail");
+    copyfail.innerHTML = "";
 
     let string = "";
 
@@ -246,5 +249,18 @@ function getString() {
 
     string += "??";
 
-    return string;
+    try {
+        await navigator.clipboard.writeText(string);
+    } catch {
+
+        const p = document.createElement("p");
+        p.textContent = "Couldn't automatically copy to clipboard. Instead, copy it manually from here:";
+
+        const text = document.createElement("textarea");
+        text.value = string;
+        text.readOnly = true;
+
+        copyfail.appendChild(p);
+        copyfail.appendChild(text);
+    }
 }
