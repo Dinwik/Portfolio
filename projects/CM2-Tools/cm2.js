@@ -1,9 +1,41 @@
 let blocks = [];
 let connections = [];
 
+let xOffset = 0;
+let yOffset = 0;
+let zOffset = 0;
+
+let offset = [];
+
 function clear() {
     blocks = [];
     connections = []
+
+    offset = [];
+
+    xOffset = 0;
+    yOffset = 0;
+    zOffset = 0;
+}
+
+function offsetCall(x, y, z) {
+    offset.push({
+        x: xOffset,
+        y: yOffset,
+        z: zOffset
+    });
+
+    xOffset += x;
+    yOffset += y;
+    zOffset += z;
+}
+
+function offsetReturn() {
+    let pos = offset.pop();
+
+    xOffset = pos.x;
+    yOffset = pos.y;
+    zOffset = pos.z;
 }
 
 function round(num) {
@@ -37,6 +69,10 @@ function format(template, input=[]) {
 
 function add(type, state, x, y, z, data, id) {
 
+    x = round(x);
+    y = round(y);
+    z = round(z);
+
     if (state == 0)
         state = "";
     if (x == 0)
@@ -51,13 +87,8 @@ function add(type, state, x, y, z, data, id) {
     if (typeof type === "string")
         type = type.toLowerCase();
 
-    x = round(x);
-    y = round(y);
-    z = round(z);
-
-
     switch(type) {
-        case 0: case "nor": type = 0; data = ""; break;
+        case 0: case "nor": case "not": type = 0; data = ""; break;
         case 1: case "and": type = 1; data = ""; break;
         case 2: case "or": type = 2; data = ""; break;
         case 3: case "xor": type = 3; data = ""; break;
@@ -180,6 +211,10 @@ function add(type, state, x, y, z, data, id) {
             break;
     }
 
+    x += xOffset;
+    y += yOffset;
+    z += zOffset;
+
     blocks.push({
         type,
         state,
@@ -211,6 +246,11 @@ function connect(start, end) {
         start = 1 + blocks.findIndex(block => block.id === start);
     if (!Number.isInteger(end))
         end = 1 + blocks.findIndex(block => block.id === end);
+
+    if (start <= 0)
+        throw new Error(`${start} is not a valid connection index`);
+    if (end <= 0)
+        throw new Error(`${end} is not a valid connection index`);
 
     connections.push({
         start, end
@@ -246,8 +286,6 @@ async function getString() {
         if (i + 1 < connections.length)
             string += ";";
     }
-
-    string += "??";
 
     try {
         await navigator.clipboard.writeText(string);

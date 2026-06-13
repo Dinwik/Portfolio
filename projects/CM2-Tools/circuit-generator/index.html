@@ -9,11 +9,13 @@
         <link rel="stylesheet" href="../../../assets/style.css">
 
         <script src="../cm2.js"></script>
+        <script src="../text-generator/text.js"></script>
         <script src="js/decoder.js"></script>
         <script src="js/rca.js"></script>
         <script src="js/cla.js"></script>
         <script src="js/double-dabble.js"></script>
         <script src="js/counter.js"></script>
+        <script src="js/memory.js"></script>
     </head>
     <body>
         <header class="options">
@@ -38,13 +40,29 @@
                 <label>
                     Circuit:
                     <select class="input" id="type">
+                        <option value="memory">Memory</option>
                         <option value="decoder">Decoder</option>
-                        <option value="rca">Ripple Carry Adder</option>
-                        <option value="cla">Carry Lookahead Adder</option>
-                        <option value="dd">Double dabble</option>
                         <option value="counter">Counter</option>
+                        <option value="cla">Carry Lookahead Adder</option>
+                        <option value="rca">Ripple Carry Adder</option>
+                        <option value="dd">Double dabble</option>
                     </select>
                 </label>
+
+                <div class="options" id="memoryOptions">
+                    <div class="option">
+                        <label>
+                            Amount of adresses:
+                            <input type="number" min="1" max="64" step="1" value="8" id="memorySize">
+                        </label>
+                    </div>
+                    <div class="option">
+                        <label>
+                            <input type="checkbox" id="dual">
+                            Dual (read 2 values at a time)
+                        </label>
+                    </div>
+                </div>
 
                 <button onclick="generate()">Click to copy CM2 string</button>
 
@@ -54,8 +72,10 @@
         <script src="js/input-handler.js"></script>
         <script>
             function generate() {
+
+                clear();
  
-                switch(document.getElementById("type").value) {
+                switch(type.value) {
 
                     case "decoder": decoder(bits.value); break;
                     case "cla": cla(bits.value); break;
@@ -70,7 +90,15 @@
                         break;
                     case "rca": rca(bits.value); break;
                     case "counter": counter(bits.value); break;
+                    case "memory":
+                        if (dual.checked)
+                            dualMemory(bits.value, size.value);
+                        else
+                            memory(bits.value, size.value);
+                        break;
                 }
+
+                getString();
             }
         </script>
         <script src="../../../assets/misc.js"></script>

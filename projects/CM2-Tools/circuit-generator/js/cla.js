@@ -1,75 +1,68 @@
-function cla(bits) {
+function cla(bits, id="") {
 
-    const tidy = 1; //1 or 0
+    let cin = add("node", 0, 3, 0, 0, 0, `CLA-${id}-CIN`);
+    let cout = add("node", 0, -bits-1, 0, -bits-5, 0, `CLA-${id}-COUT`);
+    offsetCall(4, 0, 0);
+        text("Cin");
+    offsetReturn();
+    offsetCall(-bits-5, 0, -bits-5);
+        text("Cout");
+    offsetReturn();
+    add("text", 0, 1, 0, 0, "A");
+    add("text", 0, 1, 0, -1, "B");
 
-    clear();
+    offsetCall(1, 0, -bits-5);
+        text("Output");
+    offsetReturn();
 
-    for (let i = 0; i < bits; i++) {
-        add("NODE", 0, -i, 0, 0, 0, `input-A-${i}`);
-        add("NODE", 0, -i, 0, -1, 0, `input-B-${i}`);
-
-        if (i+1 < bits)
-            add("NODE", 0, -i, 0, tidy-3-bits, 0, `COUT-${i}`);
-        else
-            add("NODE", 0, -i-2, 0, -4-bits, 0, `COUT-${i}`);
-
-        add("XOR", 0, -i, 0, tidy-5-bits, 0, `XOR-${i}`);
-
-        add("NODE", 0, -i, 0, tidy-4-bits, 0, `OR-${i}`);
-        connect(`input-A-${i}`, `OR-${i}`);
-        connect(`input-B-${i}`, `OR-${i}`);
-
-        connect(`input-A-${i}`, `XOR-${i}`);
-        connect(`input-B-${i}`, `XOR-${i}`);
-    }
-
-    add("TEXT", 0, -bits-5, 0, -4-bits, "C");
-    add("TEXT", 0, -bits-4, 0, -4-bits, "O");
-    add("TEXT", 0, -bits-3, 0, -4-bits, "U");
-    add("TEXT", 0, -bits-2, 0, -4-bits, "T");
-
-    add("TEXT", 0, 1, 0, 0, "A");
-    add("TEXT", 0, 1, 0, -1, "B");
-
-    add("NODE", 0, 3, 0, 0, 0, "COUT--1");
-    add("TEXT", 0, 4, 0, 0, "C");
-    add("TEXT", 0, 5, 0, 0, "I");
-    add("TEXT", 0, 6, 0, 0, "N");
-
-
-    for (let i = 0; i < bits; i++) {
-        connect(`COUT-${i-1}`, `XOR-${i}`);
-    }
-
+    let cinD = add("delay", 0, 0, 0, -4, 1);
+    connect(cin, cinD);
 
     for (let i = 0; i < bits; i++) {
 
-        for (j = 0; j <= i; j++) {
+        let a = add("node", 0, -i, 0, 0, 0, `CLA-${id}-INPUT-A-${i}`);
+        let b = add("node", 0, -i, 0, -1, 0, `CLA-${id}-INPUT-B-${i}`);
 
-            add("AND", 0, -i, 0, -2-j, 0, `AND-${i}-${j}`);
+        let out = add("xor", 0, -i, 0, -bits-5, 0, `CLA-${id}-OUTPUT-${i}`);
+        connect(a, out);
+        connect(b, out);
 
-            for (let k = i; k >= j; k--) {
-                
-                connect(`OR-${k}`, `AND-${i}-${j}`);
-            }
-
-            if (j == 0) {
-                connect(`COUT--1`, `AND-${i}-${j}`);
-            } else {
-                connect(`input-A-${j-1}`, `AND-${i}-${j}`);
-                connect(`input-B-${j-1}`, `AND-${i}-${j}`);
-            }
-
-            connect(`AND-${i}-${j}`, `COUT-${i}`);
+        let cout = add("node", 0, -i, 0, -bits-4, 0, `CLA-${id}-COUT-${i}`);
+        if (i == 0) {
+            connect(cinD, out);
+        } else {
+            connect(`CLA-${id}-COUT-${i-1}`, out);
         }
 
-        add("AND", 0, -i, 0, -3-i, 0, `AND-${i}-${i+1}`);
-
-        connect(`input-A-${i}`, `AND-${i}-${i+1}`)
-        connect(`input-B-${i}`, `AND-${i}-${i+1}`)
-
-        connect(`AND-${i}-${i+1}`, `COUT-${i}`);
+        let or = add("node", 0, -i, 0, -bits-3, 0, `CLA-${id}-OR-${i}`);
+        connect(a, or);
+        connect(b, or);
     }
+    connect(`CLA-${id}-COUT-${bits-1}`, cout);
 
-    getString();
+    for (let i = 0; i < bits; i++) {
+        for (let j = 0; j <= i+1; j++) {
+
+            let and = add("and", 0, -i, 0, -2-j);
+
+            for (let k = i; k >= j; k--) {
+                if (k == j) {
+                    connect(`CLA-${id}-INPUT-A-${k}`, and);
+                    connect(`CLA-${id}-INPUT-B-${k}`, and);
+                } else {
+                    connect(`CLA-${id}-OR-${k}`, and);
+                }
+            }
+
+            if (j == i+1) {
+                connect(cin, and);
+
+                for (let k = i; k >= 0; k--) {
+                    connect(`CLA-${id}-OR-${k}`, and);
+                }
+            }
+
+            connect(and, `CLA-${id}-COUT-${i}`);
+        }
+    }
 }
