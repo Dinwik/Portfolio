@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CM2 XAND Generator</title>
+        <link rel="icon" type="image/svg" href="../../../assets/icon.svg">
+        <link rel="stylesheet" href="../../../assets/style.css">
+
+        <script src="../text-generator/text.js"></script>
+        <script src="generator.js"></script>
+    </head>
+    <body>
+        <header class="options">
+            <div class="option">
+                <a href="../../../"><h2>Home</h2></a>
+            </div>
+            <div class="option">
+                <h1>CM2 XAND Generator</h1>
+            </div>
+            <div class="option">
+                <h2 id="last_update"></h2>
+            </div>
+        </header>
+        <main class="container">
+            <article class="item">     
+                <a href="../">Return</a>
+
+                <p>Boolean expression F =</p>
+                <textarea rows="15" id="input" tabfix="true" >(A or b) and (c xnor d)</textarea>
+
+                <button onclick="copyString()">Click to copy CM2 string</button>
+                <div id="copyfail"></div>
+
+                <label>
+                    Order of operations:
+                    <ol>
+                        <li>()</li>
+                        <li>! / ~ / NOT</li>
+                        <li>& / * / AND</li>
+                        <li>NAND</li>
+                        <li>^ / XOR</li>
+                        <li>XNOR</li>
+                        <li>| / + / OR</li>
+                        <li>NOR</li>
+                    </ol>
+                </label>
+            </article>
+        </main>
+        
+        <script src="../cm2.js"></script>
+        <script>
+            let input = document.getElementById("input")
+
+            function copyString() {
+                expression = input.value;
+                tokenize(expression.toUpperCase());
+
+                clear();
+                generate();
+                getString();
+            }
+        </script>
+        <script src="../../../assets/misc.js"></script>
+    </body>
+</html>

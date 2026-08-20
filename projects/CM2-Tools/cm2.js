@@ -1,41 +1,27 @@
-let blocks = [];
-let connections = [];
+let blocks_ = [];
+let connections_ = [];
 
-let xOffset = 0;
-let yOffset = 0;
-let zOffset = 0;
-
-let offset = [];
+let offset = {x: 0, y: 0, z: 0};
+let offsetStack = [];
 
 function clear() {
-    blocks = [];
-    connections = []
+    blocks_ = [];
+    connections_ = [];
 
-    offset = [];
-
-    xOffset = 0;
-    yOffset = 0;
-    zOffset = 0;
+    offsetStack = [];
+    offset = {x: 0, y: 0, z: 0};
 }
 
 function offsetCall(x, y, z) {
-    offset.push({
-        x: xOffset,
-        y: yOffset,
-        z: zOffset
-    });
+    offsetStack.push({...offset});
 
-    xOffset += x;
-    yOffset += y;
-    zOffset += z;
+    offset.x += x;
+    offset.y += y;
+    offset.z += z;
 }
 
 function offsetReturn() {
-    let pos = offset.pop();
-
-    xOffset = pos.x;
-    yOffset = pos.y;
-    zOffset = pos.z;
+    offset = offsetStack.pop();
 }
 
 function round(num) {
@@ -69,18 +55,6 @@ function format(template, input=[]) {
 
 function add(type, state, x, y, z, data, id) {
 
-    x = round(x);
-    y = round(y);
-    z = round(z);
-
-    if (state == 0)
-        state = "";
-    if (x == 0)
-        x = "";
-    if (y == 0)
-        y = "";
-    if (z == 0)
-        z = "";
     if (!Array.isArray(data))
         data = [data];
     
@@ -104,7 +78,7 @@ function add(type, state, x, y, z, data, id) {
 
             break;
 
-        case 6: case "led": type = 6;
+        case 6: case "led": type = 6; //data = [r, g, b, opacityOn, opacityOff, analog]. opacityOn, opacityOff are int 5-100, analog is 0/1. idk what it does
 
             data = data.map(Math.floor);
 
@@ -119,7 +93,7 @@ function add(type, state, x, y, z, data, id) {
 
             break;
 
-        case 7: case "note": type = 7;
+        case 7: case "note": type = 7; //data = [frequency, type]. frequency is float, type 0: sine, 1: square, 2: triangle, 3: sawtooth, 4: meow, 5: snare
 
             data[1] = Math.floor(data[1]);
 
@@ -134,7 +108,7 @@ function add(type, state, x, y, z, data, id) {
         case 9: case "custom": type = 9; data = []; break;
         case 10: case "nand": type = 10; data = []; break;
         case 11: case "xnor": type = 11; data = []; break;
-        case 12: case "random": type = 12;
+        case 12: case "random": type = 12; //data = [chance]. chance is float
 
             data[0] = Math.max(Math.min(data[0], 1), 0);
 
@@ -142,7 +116,7 @@ function add(type, state, x, y, z, data, id) {
         
             break;
 
-        case 13: case "text": type = 13;
+        case 13: case "text": type = 13; //data = [charcode].
 
             if (typeof data[0] === "string") {
                 data[0] = data[0].normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ł/g, "l").replace(/Ł/g, "L").charCodeAt();
@@ -157,7 +131,10 @@ function add(type, state, x, y, z, data, id) {
 
             break;
         
-        case 14: case "tile": type = 14;
+        case 14: case "tile": type = 14;    //data = [r, g, b, material, collision]. material 1: plastic, 2: smoothPlastic, 3: foil, 4: neon, 5: forcefield,
+                                            //6: glass, 7: grass, 8: wood, 9: slate, 10: sand, 11: pebble, 12: metal, 13: diamondPlate.
+                                            //collision 0: normal, 1: no collision when powered.
+                                        
 
             data = data.map(Math.floor);
 
@@ -173,7 +150,13 @@ function add(type, state, x, y, z, data, id) {
             break;
 
         case 15: case "node": type = 15; break;
-        case 16: case "delay": type = 16;
+        case 16: case "delay": type = 16;   //data = [delay]. delay = int 1-1000. unit = 1/20s by default.
+
+            if (data == 0) {
+                type = 15;
+                data = "";
+                break;
+            }
 
             data = data.map(Math.floor);
 
@@ -183,7 +166,8 @@ function add(type, state, x, y, z, data, id) {
 
             break;
 
-        case 17: case "antenna": type = 17;
+        case 17: case "antenna": type = 17; //data = [channel, global]. channel = int 0-65535. 
+                                            //global 0: interacts only with player's antennas, 1: interacts with all global antennas.
 
             switch(data[1]) {
                 case "local": data[1] = 0; break;
@@ -200,7 +184,7 @@ function add(type, state, x, y, z, data, id) {
             break;
 
         case 18: case "conductor2": type = 18; break;
-        case 19: case "ledmixer": type = 19;
+        case 19: case "ledmixer": type = 19;    //idfk what it does
 
             data = data.map(Math.floor);
 
@@ -211,11 +195,24 @@ function add(type, state, x, y, z, data, id) {
             break;
     }
 
-    x += xOffset;
-    y += yOffset;
-    z += zOffset;
+    x += offset.x;
+    y += offset.y;
+    z += offset.z;
 
-    blocks.push({
+    x = round(x);
+    y = round(y);
+    z = round(z);
+
+    if (state == 0)
+        state = "";
+    if (x == 0)
+        x = "";
+    if (y == 0)
+        y = "";
+    if (z == 0)
+        z = "";
+
+    blocks_.push({
         type,
         state,
         x, y, z,
@@ -223,12 +220,12 @@ function add(type, state, x, y, z, data, id) {
         id
     });
 
-    if (blocks.length >= 150000) {
+    if (blocks_.length >= 150000) {
         alert("Cannot place more than 150k blocks!");
         throw new Error("Cannot place more than 150k blocks!");
     }
 
-    return blocks.length;
+    return blocks_.length;
 }
 
 function connect(start, end) {
@@ -238,25 +235,25 @@ function connect(start, end) {
     if (end == "first")
         end = 1;
     if (start == "last")
-        start = blocks.length;
+        start = blocks_.length;
     if (end == "last")
-        end = blocks.length;
+        end = blocks_.length;
 
     if (!Number.isInteger(start))
-        start = 1 + blocks.findIndex(block => block.id === start);
+        start = 1 + blocks_.findIndex(block => block.id === start);
     if (!Number.isInteger(end))
-        end = 1 + blocks.findIndex(block => block.id === end);
+        end = 1 + blocks_.findIndex(block => block.id === end);
 
     if (start <= 0)
         throw new Error(`${start} is not a valid connection index`);
     if (end <= 0)
         throw new Error(`${end} is not a valid connection index`);
 
-    connections.push({
+    connections_.push({
         start, end
     });
 
-    if (connections.length >= 75000) {
+    if (connections_.length >= 75000) {
         alert("Cannot place more than 75k connections!");
         throw new Error("Cannot place more than 75k connections!");
     }
@@ -269,21 +266,21 @@ async function getString() {
 
     let string = "";
 
-    for (let i = 0; i < blocks.length; i++) {
-        let block = blocks[i]
+    for (let i = 0; i < blocks_.length; i++) {
+        let block = blocks_[i];
         string += `${block.type},${block.state},${block.x},${block.y},${block.z},${block.data}`;
 
-        if (i + 1 < blocks.length)
+        if (i + 1 < blocks_.length)
             string += ";";
     }
 
     string += "?";
 
-    for (let i = 0; i < connections.length; i++) {
-        let connection = connections[i]
+    for (let i = 0; i < connections_.length; i++) {
+        let connection = connections_[i];
         string += `${connection.start},${connection.end}`;
 
-        if (i + 1 < connections.length)
+        if (i + 1 < connections_.length)
             string += ";";
     }
 

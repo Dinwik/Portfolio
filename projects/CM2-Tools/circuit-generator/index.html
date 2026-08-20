@@ -13,6 +13,7 @@
         <script src="js/decoder.js"></script>
         <script src="js/rca.js"></script>
         <script src="js/cla.js"></script>
+        <script src="js/cla-fast.js"></script>
         <script src="js/double-dabble.js"></script>
         <script src="js/counter.js"></script>
         <script src="js/memory.js"></script>
@@ -41,9 +42,11 @@
                     Circuit:
                     <select class="input" id="type">
                         <option value="rca">Ripple Carry Adder</option>
-                        <option value="cla">Carry Lookahead Adder</option>
+                        <option value="cla">Carry Lookahead Adder (2 tick - 0.1s)</option>
+                        <option value="cla-fast">Carry Lookahead Adder (1 tick - 0.05s)</option>
                         <option value="decoder">Decoder</option>
-                        <option value="counter">Counter</option>
+                        <option value="counter">Counter (3 tick - 0.15s)</option>
+                        <option value="counter-fast">Counter (1 tick - 0.05s)</option>
                         <option value="memory">Memory</option>
                         <option value="dd">Double dabble</option>
                     </select>
@@ -52,7 +55,7 @@
                 <div class="options" id="memoryOptions">
                     <div class="option">
                         <label>
-                            Amount of adresses:
+                            Amount of addresses:
                             <input type="number" min="1" max="64" step="1" value="8" id="memorySize">
                         </label>
                     </div>
@@ -60,6 +63,21 @@
                         <label>
                             <input type="checkbox" id="dual">
                             Dual (read 2 values at a time)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="options" id="rcaOptions">
+                    <div class="option">
+                        <label>
+                            <input type="checkbox" id="vertical" checked="true">
+                            Vertical
+                        </label>
+                    </div>
+                    <div class="option">
+                        <label>
+                            <input type="checkbox" id="synchronized" checked="false">
+                            synchronized
                         </label>
                     </div>
                 </div>
@@ -74,27 +92,29 @@
             function generate() {
 
                 clear();
- 
+                let bits_ = parseInt(bits.value);
+                
                 switch(type.value) {
 
-                    case "decoder": decoder(bits.value); break;
-                    case "cla": cla(bits.value); break;
+                    case "decoder": decoder(bits_); break;
+                    case "cla": cla(bits_); break;
+                    case "cla-fast": clafast(bits_); break;
                     case "dd":
-                        if (bits.value < 4) {
+                        if (bits_ < 4) {
                             bits.setCustomValidity("Bits must be greater than 3");
                             bits.reportValidity();
                             return;
                         } else
                             bits.setCustomValidity("");
-                        dd(bits.value);
+                        dd(bits_);
                         break;
-                    case "rca": rca(bits.value); break;
-                    case "counter": counter(bits.value); break;
+                    case "rca": rca(bits_, synchronized.checked, vertical.checked); break;
+                    case "counter": counter(bits_); break;
                     case "memory":
                         if (dual.checked)
-                            dualMemory(bits.value, size.value);
+                            dualMemory(bits_, size.value);
                         else
-                            memory(bits.value, size.value);
+                            memory(bits_, size.value);
                         break;
                 }
 

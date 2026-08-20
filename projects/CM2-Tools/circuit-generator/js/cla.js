@@ -1,17 +1,17 @@
 function cla(bits, id="") {
 
     let cin = add("node", 0, 3, 0, 0, 0, `CLA-${id}-CIN`);
-    let cout = add("node", 0, -bits-1, 0, -bits-5, 0, `CLA-${id}-COUT`);
+    let cout = add("node", 0, -bits-1, 0, -bits-7, 0, `CLA-${id}-COUT`);
     offsetCall(4, 0, 0);
         text("Cin");
     offsetReturn();
-    offsetCall(-bits-5, 0, -bits-5);
+    offsetCall(-bits-5, 0, -bits-7);
         text("Cout");
     offsetReturn();
     add("text", 0, 1, 0, 0, "A");
     add("text", 0, 1, 0, -1, "B");
 
-    offsetCall(1, 0, -bits-5);
+    offsetCall(1, 0, -bits-7);
         text("Output");
     offsetReturn();
 
@@ -23,9 +23,13 @@ function cla(bits, id="") {
         let a = add("node", 0, -i, 0, 0, 0, `CLA-${id}-INPUT-A-${i}`);
         let b = add("node", 0, -i, 0, -1, 0, `CLA-${id}-INPUT-B-${i}`);
 
-        let out = add("xor", 0, -i, 0, -bits-5, 0, `CLA-${id}-OUTPUT-${i}`);
-        connect(a, out);
-        connect(b, out);
+        let out = add("xor", 0, -i, 0, -bits-7, 0, `CLA-${id}-OUTPUT-${i}`);
+        let delayA = add("delay", 0, -i, 0, -bits-5, 1);
+        let delayB = add("delay", 0, -i, 0, -bits-6, 1);
+        connect(a, delayA);
+        connect(b, delayB);
+        connect(delayA, out);
+        connect(delayB, out);
 
         let cout = add("node", 0, -i, 0, -bits-4, 0, `CLA-${id}-COUT-${i}`);
         if (i == 0) {

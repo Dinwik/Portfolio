@@ -3,11 +3,13 @@ const drop = document.getElementById("drop");
 const preview = document.getElementById("inputImage");
 const ictx = preview.getContext("2d");
 
+const reducedID = document.getElementById("reduced");
+
 const vertical = document.getElementById("vertical")
 
 const maxBlocks = document.getElementById("max");
 maxBlocks.addEventListener("change", function() {
-    maxBlocks.value = Math.min(Math.max(maxBlocks.value, 10), 150);
+    maxBlocks.value = Math.min(Math.max(maxBlocks.value, 5), 60);
 });
 
 const tolerance = document.getElementById("tolerance");

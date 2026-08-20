@@ -23,7 +23,7 @@ function text(value, aligned=true, autoN=0) {
                 }
                 break;
             default:
-                add("text", 0, col * move, 0, row, char);
+                add("text", 0, col*move, 0, row, char);
                 col++;
                 break;
         }

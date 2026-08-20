@@ -1,14 +1,18 @@
 function counter(bits, id="") {
 
-    let inc = add("node", 0, 1, 0, 0, 0, `COUNTER-${id}-INCREMENT`);
+    let incEarly = add("node", 0, 1, 0, 0, 0, `COUNTER-${id}-INCREMENT`);
+    let inc = add("delay", 0, -bits, 0, 0, 1);
     add("text", 0, 2, 0, 0, "+");
+    connect(incEarly, inc);
 
     let decNegated = add("node", 0, 1, 0, 1, 0, `COUNTER-${id}-DECREMENT`);
     let dec = add("nor", 1, -bits, 0, 1);
     add("text", 0, 2, 0, 1, "-");
     connect(decNegated, dec);
 
-    let set = add("node", 0, 1, 0, 2, 0, `COUNTER-${id}-SET`);
+    let setEarly = add("node", 0, 1, 0, 2, 0, `COUNTER-${id}-SET`);
+    let set = add("delay", 0, -bits, 0, 2, 1);
+    connect(setEarly, set);
     offsetCall(2, 0, 2);
         text("Set");
     offsetReturn();
