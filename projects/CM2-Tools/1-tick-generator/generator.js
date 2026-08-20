@@ -18,7 +18,7 @@ function tokenize(src) {
         else if (token == "FALSE" || token == "0") tokens.push("FALSE");
         else if (token == "(") tokens.push("(");
         else if (token == ")") tokens.push(")");
-        else if (token == "!" || token == "NOT") tokens.push("NOT");
+        else if (token == "!" || token == "NOT" || token == "~") tokens.push("NOT");
         else if (token == "&" || token == "*" || token == "AND") tokens.push("AND");
         else if (token == "NAND") tokens.push("NAND")
         else if (token == "^" || token == "XOR") tokens.push("XOR");
