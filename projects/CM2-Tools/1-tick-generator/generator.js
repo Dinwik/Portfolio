@@ -39,8 +39,6 @@ function tokenize(src) {
             case '\t':
             case '\f':
             case '\v':
-            case '0':
-            case '1':
             case '(':
             case ')':
             case '!':
