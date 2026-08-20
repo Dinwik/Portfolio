@@ -92,6 +92,8 @@ function tokenize(src) {
     }
     addToken(buffer);
 
+    vars.sort();
+
     console.log("tokens:", tokens);
     console.log("variables:", vars);
 }
