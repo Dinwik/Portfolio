@@ -42,6 +42,7 @@ function tokenize(src) {
             case '(':
             case ')':
             case '!':
+            case '~':
             case '&':
             case '*':
             case '^':
@@ -60,6 +61,7 @@ function tokenize(src) {
             case '(':
             case ')':
             case '!':
+            case '~':
             case '&':
             case '*':
             case '^':
