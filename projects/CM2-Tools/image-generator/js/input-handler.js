@@ -9,7 +9,7 @@ const vertical = document.getElementById("vertical")
 
 const maxBlocks = document.getElementById("max");
 maxBlocks.addEventListener("change", function() {
-    maxBlocks.value = Math.min(Math.max(maxBlocks.value, 5), 60);
+    maxBlocks.value = Math.min(Math.max(maxBlocks.value, 1), 60);
 });
 
 const tolerance = document.getElementById("tolerance");

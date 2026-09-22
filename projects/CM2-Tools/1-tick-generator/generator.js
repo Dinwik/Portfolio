@@ -1,215 +1,423 @@
-let expression = "A &B";
-let vars = ['A', 'B'];
-let tokens = ["A", "&", "B"];
+//TODO:
+// - unspaghettify (in progress)
+// - nodes using other nodes
 
-function setInSet(original, subset) {
-    for (let i = 0; i < subset.length; i++) {
-        if (!original.includes(subset[i]))
-            return false;
-    }
-    return true;
+const keyWordsByPriority = ["=", ":", "NOR", "OR", "XNOR", "XOR", "NAND", "AND", "NOT"];
+
+function isNextToken(buffer, char) {
+    const keywords = ["(", ")", "!", "~", "&", "*", "^", "|", "+", "=", ";", "#", ":"];
+    if (keywords.includes(char))
+        return true;
+    if (buffer.length == 1 && keywords.includes(buffer[0]))
+        return true;
+    return false;
 }
 
-function tokenize(src) {
-    function addToken(token) {
-        if (token.length == 0) return;
-
-        if (token == "TRUE" || token == "1") tokens.push("TRUE");
-        else if (token == "FALSE" || token == "0") tokens.push("FALSE");
-        else if (token == "(") tokens.push("(");
-        else if (token == ")") tokens.push(")");
-        else if (token == "!" || token == "NOT" || token == "~") tokens.push("NOT");
-        else if (token == "&" || token == "*" || token == "AND") tokens.push("AND");
-        else if (token == "NAND") tokens.push("NAND")
-        else if (token == "^" || token == "XOR") tokens.push("XOR");
-        else if (token == "XNOR") tokens.push("XNOR");
-        else if (token == "|" || token == "+" || token == "OR") tokens.push("OR");
-        else if (token == "NOR") tokens.push("NOR");
-        else {
-            if (!vars.includes(token)) {
-                vars.push(token);
-            }
-            tokens.push(token)
-        };
+function normalizeToken(string) {
+    switch(string) {
+        case "TRUE":
+        case "1":
+            return "TRUE";
+        case "FALSE":
+        case "0":
+            return "FALSE";
+        case "(":
+            return "(";
+        case ")":
+            return ")";
+        case "!":
+        case "NOT":
+        case "~":
+            return "NOT";
+        case "&":
+        case "*":
+        case "AND":
+            return "AND";
+        case "NAND":
+            return "NAND";
+        case "^":
+        case "XOR":
+            return "XOR";
+        case "XNOR":
+            return "XNOR";
+        case "|":
+        case "+":
+        case "OR":
+            return "OR";
+        case "NOR":
+            return "NOR";
+        case "=":
+            return "=";
+        case ":":
+            return ":";
+        case ";":
+            return ";";
+        default:
+            return "_"+string;
     }
-    function isNextToken(buffer, c) {
-        switch (c) {
-            case ' ':
-            case '\n':
-            case '\t':
-            case '\f':
-            case '\v':
-            case '(':
-            case ')':
-            case '!':
-            case '~':
-            case '&':
-            case '*':
-            case '^':
-            case '|':
-            case '+':
-                return true;
-        }
-        switch (buffer[0]) {
-            case ' ':
-            case '\n':
-            case '\t':
-            case '\f':
-            case '\v':
-            case '0':
-            case '1':
-            case '(':
-            case ')':
-            case '!':
-            case '~':
-            case '&':
-            case '*':
-            case '^':
-            case '|':
-            case '+':
-                return true;
-        }
-        return false;
-    }
+}
 
-    vars = [];
-    tokens = [];
+function getLinesOfTokensFromTokens(tokens) {
+    let linesOfTokens = [];
+    let buffer = [];
+    for (let i = 0; i < tokens.length; i++) {
+        let token = tokens[i];
+        if (token == ";") {
+            linesOfTokens.push(buffer);
+            buffer = [];
+            continue;
+        }
+        buffer.push(token);
+    }
+    return linesOfTokens;
+}
+
+function getTokensAndVariables(expression) {
+    let tokens = [];
+    let variables = [];
 
     let buffer = "";
-    for (let i = 0; i < src.length; i++) {
-        let c = src[i];
+    function nextToken() {
+        if (buffer.length > 0) {
+            let token = normalizeToken(buffer)
+            if (token[0] == "_") {
+                token = token.slice(1)
+                if (!variables.includes(buffer))
+                    variables.push(token);
+            }
+            tokens.push(token);
+        }
+        buffer = "";
+    }
 
-        if (/\s/.test(c)) {
-            addToken(buffer);
+    for (let i = 0; i < expression.length; i++) {
+        const char = expression[i];
+
+        if (/\s/.test(char)) {
+            nextToken();
+            continue;
+        }
+        
+        if (char == "#") {
+            const commentEnding = expression.indexOf("#", i+1);
+            if (commentEnding == -1)
+                break;
+            i = commentEnding;
             buffer = "";
             continue;
         }
-        if (isNextToken(buffer, c)) {
-            addToken(buffer);
-            buffer = "";
-        }
-        buffer += c;
+
+        if (isNextToken(buffer, char))
+            nextToken();
+
+        buffer += char;
     }
-    addToken(buffer);
-
-    vars.sort();
-
-    console.log("tokens:", tokens);
-    console.log("variables:", vars);
+    nextToken();
+    return [tokens, variables];
 }
 
-function evaluate(values) {
-    function evaluateSimple(expr) {
-        while (expr.includes("NOT")) {
-            let i = expr.indexOf("NOT");
-            expr[i+1] = !expr[i+1];
-            expr.splice(i, 1);
+function classifyVariables(tokens, variables) {
+    let outputs = [];
+    for (let i = 0; i < tokens.length-1; i++) {
+        const token = tokens[i];
+        const nextToken = tokens[i+1];
+        const idx = variables.indexOf(token);
+        if (idx != -1) {
+            if (nextToken == "=") {
+                variables.splice(idx, 1);
+                outputs.push(token);
+            } else if (nextToken == ":") {
+                variables.splice(idx, 1);
+            }
         }
-        while (expr.includes("AND")) {
-            let i = expr.indexOf("AND");
-            expr[i-1] = expr[i-1] && expr[i+1];
-            expr.splice(i, 2);
-        }
-        while (expr.includes("NAND")) {
-            let i = expr.indexOf("NAND");
-            expr[i-1] = !(expr[i-1] && expr[i+1]);
-            expr.splice(i, 2);
-        }
-        while (expr.includes("XOR")) {
-            let i = expr.indexOf("XOR");
-            expr[i-1] = expr[i-1] != expr[i+1];
-            expr.splice(i, 2);
-        }
-        while (expr.includes("XNOR")) {
-            let i = expr.indexOf("XNOR");
-            expr[i-1] = expr[i-1] == expr[i+1];
-            expr.splice(i, 2);
-        }
-        while (expr.includes("OR")) {
-            let i = expr.indexOf("OR");
-            expr[i-1] = expr[i-1] || expr[i+1];
-            expr.splice(i, 2);
-        }
-        while (expr.includes("NOR")) {
-            let i = expr.indexOf("NOR");
-            expr[i-1] = !(expr[i-1] || expr[i+1]);
-            expr.splice(i, 2);
-        }
-        return (expr[0]);
     }
-
-    let expr = tokens.map(token => token == "TRUE" ? 1 : (token == "FALSE" ? 0 : (vars.includes(token) ? values[vars.indexOf(token)] : token)));
-
-    while (expr.includes("(")) {
-        let opening = expr.lastIndexOf("(");
-        let closing = expr.indexOf(")", opening);
-        let evaluated = evaluateSimple(expr.splice(opening+1, closing-opening - 1));
-        expr.splice(opening, 2, evaluated);
-    }
-    let evaluated = evaluateSimple(expr);
-    return evaluated;
+    return [variables, outputs];
 }
 
-function generate() {
-
-    //make all sets
-        const sets = [];
-        for (let i = 0; i < Math.pow(2, vars.length); i++) {
-            sets.push([]);
-            const binary = i.toString(2).padStart(vars.length, '0');
-
-            for (let j = 0; j < binary.length; j++) {
-                if (binary[j] == 1)
-                    sets[i].push(vars[j]);
-            }
-        }
-        sets.sort((a, b) => a.length - b.length);
-
-    //filter sets
-        let results = [];
-        let groupCount = 0;
-        let finalGroups = [];
-        for (let i = 0; i < sets.length; i++) {
-            let values = [];
-            for (let j = 0; j < vars.length; j++)
-                values.push(!sets[i].includes(vars[j]));
-            let result = evaluate(values);
-            for (let j = 0; j < results.length; j++) {
-                if (setInSet(sets[i], sets[j]))
-                    result ^= results[j];
-            }
-            results.push(result);
-            if (sets[i].length > 0 && result) {
-                groupCount++;
-                finalGroups.push(sets[i]);
-            }
-        }
-        let finalGate = (results[0] ^ (groupCount%2==0 ? false : true)) ? "xnor" : "xor";
-
-    //make circuit
-        offsetCall(0, 0, 2);
-            text(input.value, false);
-        offsetReturn();
-        let inputs = [];
-        for (let i = 0; i < vars.length; i++) {
-            offsetCall(0, 0, -i*2);
-                inputs.push(add("tff", 0, 0, 0, 0, 0));
-                offsetCall(-vars[i].length, 0, 0);
-                    text(vars[i])
-                offsetReturn();
-            offsetReturn();
-        }
-        let out = add(finalGate, 0, 4, 0, 0);
-        let pos = 0;
-        for (let i = 0; i < finalGroups.length; i++) {
-            if (finalGroups[i].length == 1) {
-                connect(inputs[vars.indexOf(finalGroups[i][0])], out);
+function findFirstKeywordOutsideBrackets(tokens, keyword) {
+    let depth = 0;
+    for (let i = 0; i < tokens.length; i++) {
+        switch(tokens[i]) {
+            case "(":
+                depth++;
                 continue;
-            }
-            let node = add("node", 0, 2, 0, -pos++*2);
-            for (let j = 0; j < finalGroups[i].length; j++) {
-                connect(inputs[vars.indexOf(finalGroups[i][j])], node);
-            }
-            connect(node, out);
+            case ")":
+                depth--;
+                continue;
+            case keyword:
+                if (depth == 0)
+                    return i;
+                continue;
+            default:
+                continue;
         }
+    }
+    return -1;
 }
+
+function findClosingBracketIdx(tokens, opening) {
+    let depth = 0;
+    for (let i = opening+1; i < tokens.length; i++) {
+        switch(tokens[i]) {
+            case "(":
+                depth++;
+                continue;
+            case ")":
+                if (depth == 0)
+                    return i;
+                depth--;
+                continue;
+            default:
+                continue;
+        }
+    }
+    throw new Error("Bracket was opened, but not closed.");
+}
+
+function getParseTreeBranchFromTokens(tokens) {
+    while (tokens[0] == "(" && findClosingBracketIdx(tokens, 0) == tokens.length-1)
+        tokens = tokens.slice(1, tokens.length-1);
+    if (tokens.length == 1)
+        return tokens[0];
+    
+    for (let i = 0; i < keyWordsByPriority.length; i++) {
+        const keyword = keyWordsByPriority[i];
+        const idx = findFirstKeywordOutsideBrackets(tokens, keyword);
+        if (idx == -1)
+            continue;
+
+        const result = [
+            keyword,
+            getParseTreeBranchFromTokens(tokens.slice(0, idx)),
+            getParseTreeBranchFromTokens(tokens.slice(idx+1, tokens.length))
+        ];
+
+        if (keyword == "NOT")
+            result.splice(1, 1);
+
+        return result;
+    }
+    return "You messed up";
+}
+
+function growAParseTreeFromLinesOfTokens(linesOfTokens) {
+    let parseTree = [];
+
+    for (let i = 0; i < linesOfTokens.length; i++)
+        parseTree.push(getParseTreeBranchFromTokens([...linesOfTokens[i]]));
+
+    return parseTree;
+}
+
+function getAllSets(inputs) {
+    let sets = [];
+    for (let i = 0; i < Math.pow(2, inputs.length); i++) {
+        sets.push([]);
+        const binary = i.toString(2).padStart(inputs.length, "0");
+        for (let j = 0; j < binary.length; j++) {
+            if (binary[j] == 1)
+                sets[i].push(inputs[j]);
+        }
+    }
+    sets.sort((a, b) => a.length - b.length);
+    return sets;
+}
+
+function evaluateBranch(branch, values) {
+    if (!Array.isArray(branch)) {
+        if (branch == "TRUE") return true;
+        if (branch == "FALSE") return false;
+        if (!(branch in values))
+            throw new Error(`Variable '${branch}' is undefined.`)
+        return values[branch];
+    }
+
+    let opperrand = branch[0];
+    if (opperrand == "NOT") {
+        return !evaluateBranch(branch[1], values);
+    }
+    if (opperrand == "=") {
+        values[branch[1]] = evaluateBranch(branch[2], values);
+        return;
+    }
+    if (opperrand == ":") {
+        values[branch[1]] = evaluateBranch(branch[2], values);
+        return;
+    }
+
+    let arg1 = evaluateBranch(branch[1], values);
+    let arg2 = evaluateBranch(branch[2], values);
+    switch(opperrand) {
+        case "NOR":
+            return !(arg1 || arg2);
+        case "OR":
+            return arg1 || arg2;
+        case "XNOR":
+            return arg1 == arg2;
+        case "XOR":
+            return arg1 != arg2;
+        case "NAND":
+            return !(arg1 && arg2);
+        case "AND":
+            return arg1 && arg2;
+        default:
+            throw new Error(`Unknown opperrand '${opperrand}'`);
+    }
+}
+
+function evaluate(parseTree, values, outputs) {
+    for (let i = 0; i < parseTree.length; i++) {
+        evaluateBranch(parseTree[i], values);
+    }
+    
+    let results = [];
+    for (let i = 0; i < outputs.length; i++) {
+        results[i] = values[outputs[i]];
+    }
+    return results;
+}
+
+class XAND {
+    #expression = "";
+
+    #inputs = [];
+    #outputs = [];
+
+    #allGroups = [];
+    #groups = [];
+    #gates = [];
+
+    constructor(expression) {
+        this.#expression = expression;
+    }
+
+    generateAndGetCircuit() {
+        const [tokens, variables] = getTokensAndVariables(this.#expression.toUpperCase().replace(/\s+/g, ' ').trim());
+        console.log("Tokens:", tokens);
+        console.log("Vars:", variables);
+        
+        const [inputs, outputs] = classifyVariables(tokens, variables);
+        [this.#inputs, this.#outputs] = [inputs, outputs];
+        console.log("Inputs:", inputs);
+        console.log("Outputs:", outputs);
+        
+        const linesOfTokens = getLinesOfTokensFromTokens(tokens);
+        console.log("Lines of tokens:", linesOfTokens);
+
+        const parseTree = growAParseTreeFromLinesOfTokens(linesOfTokens);
+        console.log("Parse tree:", parseTree);
+
+        this.#generateSets(inputs, parseTree, outputs);
+        return this.#getCircuit();
+    }
+
+    #generateSets(inputs, parseTree, outputs) {
+        this.#allGroups = getAllSets(inputs);
+
+        let results = {};
+        let finalGroups = {};
+        let groupCount = [];
+        this.#gates = {};
+        for (let i = 0; i < this.#outputs.length; i++) {
+            results[this.#outputs[i]] = [];
+            finalGroups[i] = [];
+            groupCount[i] = 0;
+        }
+
+        for (let i = 0; i < this.#allGroups.length; i++) {
+            let values = {};
+            for (let j = 0; j < this.#inputs.length; j++)
+                values[this.#inputs[j]] = !this.#allGroups[i].includes(this.#inputs[j]);
+
+            let result = evaluate(parseTree, values, outputs);
+
+            for (let k = 0; k < this.#outputs.length; k++) {
+                for (let j = 0; j < results[this.#outputs[k]].length; j++) {
+                    if (this.#isSetInSet(this.#allGroups[i], this.#allGroups[j])) {
+                        result[k] ^= results[this.#outputs[k]][j];
+                    }
+                }
+                results[this.#outputs[k]].push(result[k]);
+
+                if (this.#allGroups[i].length > 0 && result[k]) {
+                    finalGroups[k].push(i);
+                    groupCount[k]++;
+                }
+            }
+        }
+
+        for (let i = 0; i < this.#outputs.length; i++)
+            this.#gates[i] = (results[this.#outputs[i]][0] ^ (groupCount[i]%2 == 1)) ? Block.XNOR : Block.XOR;
+
+        this.#groups = finalGroups;
+        console.log(this.#allGroups);
+        console.log(this.#groups);
+    }
+
+    #isSetInSet(original, subset) {
+        for (let i = 0; i < subset.length; i++) {
+            if (!original.includes(subset[i]))
+                return false;
+        }
+        return true;
+    }
+
+    #getCircuit() {
+        let inputs = [];
+        let circuit = new Circuit;
+        let allGroups = this.#allGroups;
+        let nodes = [];
+
+        function getNodeIndexFromSet(inputSet) {
+            let group = allGroups[inputSet];
+            console.log(inputSet);
+            if (group.length == 1)
+                return group[0];
+
+            for (let i = 0; i < nodes.length; i++) {
+                if (nodes[i].set == inputSet)
+                    return nodes[i].idx;
+            }
+
+            let node = circuit.placeBlock(Block.NODE, 1, 0, -nodes.length);
+            nodes.push({set: inputSet, idx: node});
+            for (let i = 0; i < group.length; i++) {
+                circuit.connect(group[i], node);
+            }
+            return node;
+        }
+
+        for (let i = 0; i < this.#inputs.length; i++) {
+            inputs.push(circuit.placeBlock(Block.TFF, 0, 0, -i));
+            circuit.offsetCall(-this.#inputs[i].length, 0, -i);
+                circuit.addCircuit(text(this.#inputs[i]));
+            circuit.offsetReturn();
+        }
+
+        for (let i = 0; i < allGroups.length; i++)
+            for (let j = 0; j < allGroups[i].length; j++) {
+                allGroups[i][j] = inputs[this.#inputs.indexOf(allGroups[i][j])];
+            }
+
+        for (let i = 0; i < this.#outputs.length; i++) {
+            let output = circuit.placeBlock(this.#gates[i], 2, 0, -i);
+            circuit.offsetCall(3, 0, -i);
+                circuit.addCircuit(text(this.#outputs[i]));
+            circuit.offsetReturn();
+
+            console.log(this.#outputs[i]);
+            for (let j = 0; j < this.#groups[i].length; j++) {
+                const inputSet = this.#groups[i][j];
+                
+                let node = getNodeIndexFromSet(inputSet);
+                circuit.connect(node, output);
+            }
+        }
+
+        circuit.offsetCall(0, 0, 2);
+            circuit.addCircuit(text(this.#expression, false, 100));
+        circuit.offsetReturn();
+
+        return circuit;
+    }
+};

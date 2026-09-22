@@ -7,6 +7,7 @@
         <link rel="icon" type="image/svg" href="../../../assets/icon.svg">
         <link rel="stylesheet" href="../../../assets/style.css">
 
+        <script src="../js/cm2.js"></script>
         <script src="text.js"></script>
     </head>
     <body>
@@ -43,22 +44,18 @@
             </article>
         </main>
         
-        <script src="../cm2.js"></script>
         <script>
             const aligned = document.getElementById("aligned");
             const auto = document.getElementById("auto");
             const input = document.getElementById("input");
 
             function copyString() {
-                clear();
-
-                let value = input.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ł/g, "l").replace(/Ł/g, "L").split("").filter(char => char.charCodeAt(0) <= 127).join("");
-
-                text(value, aligned.checked, auto.checked ? 100 : 0);
-
-                getString()
+                let circuit = new Circuit;
+                circuit.addCircuit(text(input.value, aligned.checked, auto.checked ? 100 : 0));
+                copy(circuit.getString());
             }
         </script>
         <script src="../../../assets/misc.js"></script>
+        <script src="../js/copy.js"></script>
     </body>
 </html>

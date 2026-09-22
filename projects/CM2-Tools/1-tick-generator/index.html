@@ -6,9 +6,6 @@
         <title>CM2 XAND Generator</title>
         <link rel="icon" type="image/svg" href="../../../assets/icon.svg">
         <link rel="stylesheet" href="../../../assets/style.css">
-
-        <script src="../text-generator/text.js"></script>
-        <script src="generator.js"></script>
     </head>
     <body>
         <header class="options">
@@ -27,7 +24,22 @@
                 <a href="../">Return</a>
 
                 <p>Boolean expression F =</p>
-                <textarea rows="15" id="input" tabfix="true" >(A or b) and (c xnor d)</textarea>
+                <textarea rows="15" id="input" tabfix="true"># text between hashes is comment #
+# operations (in order): (), (!, ~, NOT), (&, *, AND), NAND, (^, XOR), (|, +, OR), NOR, =, : #
+# '=' sets output value to the right side expression #
+# ':' sets a temporary variable to the right side expression (not visible in final XAND) #
+# semicolon must be put after each line of code #
+
+# example program for a 2-bit adder #
+
+# this forces the inputs to be in that order#
+cin; a0; a1; b0; b1;
+
+s0 = a0^b0^cin;
+c1: a0&b0 | a0&cin | b0&cin;
+
+s1 = a1^b1^c1;
+carryout = a1&b1 | a1&c1 | b1&c1;</textarea>
 
                 <button onclick="copyString()">Click to copy CM2 string</button>
                 <div id="copyfail"></div>
@@ -43,24 +55,30 @@
                         <li>XNOR</li>
                         <li>| / + / OR</li>
                         <li>NOR</li>
+                        <li>= / :</li>
                     </ol>
                 </label>
+
+                <div id="output"></div>
             </article>
         </main>
-        
-        <script src="../cm2.js"></script>
+
         <script>
             let input = document.getElementById("input")
 
             function copyString() {
                 expression = input.value;
-                tokenize(expression.toUpperCase());
 
-                clear();
-                generate();
-                getString();
+                let xand = new XAND(expression);
+                let circuit = xand.generateAndGetCircuit().getString();
+                console.log(circuit);
+                copy(circuit);
             }
         </script>
+        <script src="../js/cm2.js"></script>
+        <script src="../js/copy.js"></script>
+        <script src="../text-generator/text.js"></script>
+        <script src="generator.js"></script>
         <script src="../../../assets/misc.js"></script>
     </body>
 </html>

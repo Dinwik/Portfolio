@@ -1,4 +1,6 @@
 function text(value, aligned=true, autoN=0) {
+    let circuit = new Circuit;
+
     const move = aligned ? 1 : 0.45;
 
     let row = 0;
@@ -23,9 +25,11 @@ function text(value, aligned=true, autoN=0) {
                 }
                 break;
             default:
-                add("text", 0, col*move, 0, row, char);
+                circuit.placeBlock(Block.TEXT, col*move, 0, row, char);
                 col++;
                 break;
         }
     }
+
+    return circuit;
 }
