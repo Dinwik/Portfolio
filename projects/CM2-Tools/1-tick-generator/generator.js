@@ -14,6 +14,7 @@ function isNextToken(buffer, char) {
 }
 
 function normalizeToken(string) {
+    const upper = string.toUpperCase();
     switch(string) {
         case "TRUE":
         case "1":
@@ -292,7 +293,7 @@ class XAND {
     }
 
     generateAndGetCircuit() {
-        const [tokens, variables] = getTokensAndVariables(this.#expression.toUpperCase().replace(/\s+/g, ' ').trim());
+        const [tokens, variables] = getTokensAndVariables(this.#expression.replace(/\s+/g, ' ').trim());
         console.log("Tokens:", tokens);
         console.log("Vars:", variables);
         
