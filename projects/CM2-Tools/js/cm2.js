@@ -18,7 +18,7 @@ const Block = Object.freeze({
     //       capacityOn (5 - 100), analog (0 / 1).
     LED: 6,
 
-    // Plays a constant frequency when at least one input is enabled.
+    // Plays a frequency when at least one input is enabled. Freqency is multiplied by amount of enabled inputs divided by amount of all inputs.
     // Data: frequency (0 - 16000),
     //       type (0: sine, 1: square, 2: triangle, 3: sawtooth, 4: meow, 5: snare).
     MUSIC: 7,
