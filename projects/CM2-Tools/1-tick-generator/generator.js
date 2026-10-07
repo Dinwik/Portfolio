@@ -288,8 +288,11 @@ class XAND {
     #groups = [];
     #gates = [];
 
-    constructor(expression) {
+    #viscode = false;
+
+    constructor(expression, viscode) {
         this.#expression = expression;
+        this.#viscode = viscode;
     }
 
     generateAndGetCircuit() {
@@ -415,9 +418,11 @@ class XAND {
             }
         }
 
-        circuit.offsetCall(0, 0, 2);
-            circuit.addCircuit(text(this.#expression, false, 100));
-        circuit.offsetReturn();
+        if (this.#viscode) {
+            circuit.offsetCall(0, 0, 2);
+                circuit.addCircuit(text(this.#expression, false, 100));
+            circuit.offsetReturn();
+        }
 
         return circuit;
     }

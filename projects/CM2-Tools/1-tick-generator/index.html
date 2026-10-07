@@ -43,6 +43,8 @@ carryout = a1&b1 | a1&c1 | b1&c1;</textarea>
                 <button onclick="copyString()">Click to copy CM2 string</button>
                 <div id="copyfail"></div>
 
+                <label><input type="checkbox" id="visibleCode" checked="true">Visible code</label>
+
                 <label>
                     Order of operations:
                     <ol>
@@ -66,11 +68,12 @@ carryout = a1&b1 | a1&c1 | b1&c1;</textarea>
 
         <script>
             let input = document.getElementById("input")
+            let viscode = document.getElementById("visibleCode");
 
             function copyString() {
                 expression = input.value;
 
-                let xand = new XAND(expression);
+                let xand = new XAND(expression, viscode.checked);
                 let circuit = xand.generateAndGetCircuit().getString();
                 console.log(circuit);
                 copy(circuit);
