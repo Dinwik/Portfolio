@@ -1,0 +1,51 @@
+name: Obfuscate and deploy
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalacja narzędzi
+        run: npm install -g javascript-obfuscator html-minifier-terser clean-css-cli
+
+      - name: Przygotuj folder wyjściowy
+        run: |
+          mkdir ../dist
+          cp -r . ../dist/
+          rm -rf ../dist/.git ../dist/.github
+          mv ../dist ./dist
+
+      - name: Obfuskacja JS
+        run: |
+          find dist -name "*.js" -exec javascript-obfuscator {} --output {} \;
+
+      - name: Minifikacja CSS i HTML
+        run: |
+          find dist -name "*.css" -exec cleancss -o {} {} \;
+          find dist -name "*.html" -exec html-minifier-terser --collapse-whitespace --remove-comments --minify-js true --minify-css true -o {} {} \;
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - uses: actions/deploy-pages@v4
