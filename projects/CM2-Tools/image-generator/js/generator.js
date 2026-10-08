@@ -65,8 +65,8 @@ async function generate(res=1) {
                 );
 
                 if (diff > tolerance.value) {
-                    if (vertical.checked) add("TILE", 0, x/size, (height - y - size - 1)/size, 0.0001*(i), [targetR, targetG, targetB, 2]);
-                    else add("TILE", 0, x/size, 0.0001*(i), y/size, [targetR, targetG, targetB, 2]);
+                    if (vertical.checked) add("TILE", 0, x/size, (height - y - size - 1 + 0.001*x)/size, 0.0001*(i++), [targetR, targetG, targetB, 2]);
+                    else add("TILE", 0, x/size, 0.0001*(i++), y/size, [targetR, targetG, targetB, 2]);
 
                     if (blocks_.length > maxBlocks.value*1000) {
                         res++;
@@ -74,11 +74,10 @@ async function generate(res=1) {
                     }
                     
                     for (let X = x; X < Math.min(x+size, width-1); X++) {
-                        for (let Y = y; Y < Math.min(y+size, height); Y++) {
+                        for (let Y = y; Y < Math.min(y+size, height-1); Y++) {
                             gen[X][Y] = [targetR, targetG, targetB];
                         }
                     }
-                    i++;
                 } else {
                     reduced++;
                 }

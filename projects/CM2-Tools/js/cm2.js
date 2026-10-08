@@ -77,7 +77,7 @@ const Block = Object.freeze({
 });
 
 function removeFloatingPointError(value) {
-    if (Math.abs(value - Math.round(value)) < 0.001)
+    if (Math.abs(value - Math.round(value)) < 0.01)
         return Math.round(value);
     return value;
 }
@@ -120,8 +120,8 @@ class Circuit {
         this.#blocks.push({
             type: type,
             powered: powered,
-            position: this.#offsetBlockPositionAndReduceLength({x: x, y: y, z: z}),
-            data: this.#reduceDataLength(type, data),
+            position: {x: x, y: y, z: z},
+            data: data,
             id: id
         });
         return this.#blocks.length;
@@ -154,7 +154,9 @@ class Circuit {
 
         for (let i = 0; i < this.#blocks.length; i++) {
             let block = this.#blocks[i];
-            string += `${block.type},${block.powered},${block.position.x},${block.position.y},${block.position.z},${block.data}`;
+            let position = this.#reduceLengthVec3({...block.position});
+            let data = this.#reduceDataLength(block.type, block.data);
+            string += `${block.type},${block.powered},${position.x},${position.y},${position.z},${data}`;
 
             if (i+1 < this.#blocks.length)
                 string += ";";
@@ -181,8 +183,13 @@ class Circuit {
 
         for (let i = 0; i < circuitBlocks.length; i++) {
             let block = circuitBlocks[i];
-            block.position = offsetVec3(block.position, this.#currentOffset);
-            this.#blocks.push(block);
+            this.#blocks.push({
+                type: block.type,
+                powered: block.powered,
+                position: offsetVec3(block.position, this.#currentOffset),
+                data: block.data,
+                id: block.id
+            });
         }
         for (let i = 0; i < circuitConnections.length; i++) {
             this.#connections.push({start: circuitConnections[i].start + connectionIdxOffset, end: circuitConnections[i].end + connectionIdxOffset});
@@ -207,11 +214,10 @@ class Circuit {
         return this.#blocks.findIndex(block => block.id == id) + 1;
     }
 
-    #offsetBlockPositionAndReduceLength(position) {
-        let blockPosition = offsetVec3(position, this.#currentOffset);
-        blockPosition = removeFloatingPointErrorVec3(blockPosition);
-        blockPosition = zeroToEmptyStringVec3(blockPosition);
-        return blockPosition;
+    #reduceLengthVec3(position) {
+        position = removeFloatingPointErrorVec3(position);
+        position = zeroToEmptyStringVec3(position);
+        return position;
     }
 
     #removeValuesFromDataIfDefaultAndJoin(data, defaultValues) {

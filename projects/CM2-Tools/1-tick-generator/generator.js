@@ -404,7 +404,8 @@ class XAND {
             }
 
         for (let i = 0; i < this.#outputs.length; i++) {
-            let output = circuit.placeBlock(this.#gates[i], 2, 0, -i);
+            let output = circuit.placeBlock(Block.TFF, 2, 0, -i);
+            circuit.connect(output, output);
             circuit.offsetCall(3, 0, -i);
                 circuit.addCircuit(text(this.#outputs[i]));
             circuit.offsetReturn();
