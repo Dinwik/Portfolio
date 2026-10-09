@@ -117,10 +117,11 @@ class Circuit {
     placeBlock(type, x, y, z, data=[], id="", powered="") {
         if (powered != "")
             powered = "1";
+        if (!Array.isArray(data)) data = [data];
         this.#blocks.push({
             type: type,
             powered: powered,
-            position: {x: x, y: y, z: z},
+            position: offsetVec3({x: x, y: y, z: z}, this.#currentOffset),
             data: data,
             id: id
         });
@@ -241,8 +242,7 @@ class Circuit {
     }
 
     #reduceDataLength(type, data) {
-        if (!Array.isArray(data))
-            data = [data];
+        data = [...data];
         switch(type) {
             case Block.TFF:
                 return this.#removeValuesFromDataIfDefaultAndJoin(data, [0, 0]);
@@ -269,6 +269,8 @@ class Circuit {
     }
 
     #toAsciiCharCode(char) {
+        if (typeof(char) == "number") return char;
+        if (char == '' || char == undefined) return 65;
         return char.replace(/ł/g, 'l').replace(/Ł/g, 'L').normalize('NFD').charCodeAt();
     }
 };
