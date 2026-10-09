@@ -14,8 +14,7 @@ function isNextToken(buffer, char) {
 }
 
 function normalizeToken(string) {
-    const upper = string.toUpperCase();
-    switch(string) {
+    switch(string.toUpperCase()) {
         case "TRUE":
         case "1":
             return "TRUE";

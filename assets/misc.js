@@ -1,4 +1,4 @@
-const last_update = "Last update: 8th October 2026";
+const last_update = "Last update: 10th October 2026";
 document.getElementById("last_update").textContent = last_update;
 
 document.addEventListener('keydown', function(event) {
