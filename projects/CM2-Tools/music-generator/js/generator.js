@@ -19,9 +19,9 @@ function buildPiano(circuit) {
 
 function buildCircuit(circuit, freqs) {
     const button = circuit.placeBlock(Block.BUTTON, 0, 0, 0);
-    const tff = circuit.placeBlock(Block.TFF, 0, 0, 0, [], "", true);
-    const node = circuit.placeBlock(Block.NODE, 0, 0, 0);
-    let prev = circuit.placeBlock(Block.AND, 0, 0, 0);
+    const tff = circuit.placeBlock(Block.TFF, 0, 0, 1, [], "", true);
+    const node = circuit.placeBlock(Block.NODE, 0, 0, 1);
+    let prev = circuit.placeBlock(Block.AND, 0, 0, 1);
     circuit.connect(button, prev);
     circuit.connect(prev, node);
     circuit.connect(node, tff);
