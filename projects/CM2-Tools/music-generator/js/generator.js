@@ -3,7 +3,7 @@ async function generate() {
 
     buildPiano(circuit);
 
-    const freqs = await doSomething(input);
+    const freqs = await doSomething(input); console.log(freqs);
     buildCircuit(circuit, freqs);
 
     copy(circuit.getString());

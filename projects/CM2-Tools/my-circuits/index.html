@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My CM2 Circuits</title>
+        <meta name="description" content="The best circuits i made.">
+
+        <link rel="icon" type="image/svg" href="../../../assets/icon.svg">
+        <link rel="stylesheet" href="../../../assets/style.css">
+    </head>
+    <body>
+        <header class="options">
+            <div class="option">
+                <a href="../../../"><h2>Home</h2></a>
+            </div>
+            <div class="option">
+                <h1>My CM2 Circuits</h1>
+            </div>
+            <div class="option">
+                <h2 id="last_update"></h2>
+            </div>
+        </header>
+        <main class="container">
+            <article class="item">
+                <a href="../">
+                    Return
+                </a>
+
+                <div class="options">
+                    <div class="option">
+                        QR code generator
+                    </div>
+                    <div class="option">
+                        <button onClick="copy(qr);">Copy</button>
+                    </div>
+                </div>
+
+                <div class="options">
+                    <div class="option">
+                        Cool house
+                    </div>
+                    <div class="option">
+                    <button onClick="copy(house);">Copy</button>
+                    </div>
+                </div>
+
+                <div class="options">
+                    <div class="option">
+                    1-Tick square root calculator (with decimal display)
+                    </div>
+                    <div class="option">
+                    <button onClick="copy(house);">Copy</button>
+                    </div>
+                </div>
+
+                <div id="copyfail"></div>
+            </article>
+        </main>
+        <script src="savestrings.js"></script>
+        <script src="../js/copy.js"></script>
+        <script src="../../../assets/misc.js"></script>
+    </body>
+</html>
