@@ -1,7 +1,7 @@
 function text(value, aligned=true, autoN=0) {
     let circuit = new Circuit;
 
-    const move = aligned ? 1 : 0.45;
+    const move = aligned ? 1 : 0.5;
 
     let row = 0;
     let col = 0;
