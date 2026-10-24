@@ -382,7 +382,7 @@ class XAND {
                     return nodes[i].idx;
             }
 
-            let node = circuit.placeBlock(Block.NODE, 1, 0, -nodes.length);
+            let node = circuit.placeBlock(Block.NODE, 1, 0, 0);
             nodes.push({set: inputSet, idx: node});
             for (let i = 0; i < group.length; i++) {
                 circuit.connect(group[i], node);

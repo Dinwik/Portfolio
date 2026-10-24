@@ -97,7 +97,7 @@ function zeroToEmptyString(value) {
     if (value == 0)
         return "";
     return value;
-}
+} 
 
 function zeroToEmptyStringVec3(vec3) {
     vec3.x = zeroToEmptyString(vec3.x);
