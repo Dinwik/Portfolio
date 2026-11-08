@@ -1,7 +1,7 @@
 function t(x) {
-    x /= 255
-    let r = (3*(1-x)**8+1)*x
-    return Math.floor(r*255);
+    x = Math.floor(x*(3*Math.pow(1-x/255, 8)+1));
+    if (x % 2 == 1) x--;
+    return x;
 }
 
 async function generate(res=1) {

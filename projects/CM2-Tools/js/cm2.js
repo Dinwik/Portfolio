@@ -1,5 +1,6 @@
 // Note: 1 tick is 0.05s (1/20s) by default.
 // each block can have any amount of inputs and output
+//TODO: Buildings
 
 const Block = Object.freeze({
     NOR: 0,
@@ -75,6 +76,16 @@ const Block = Object.freeze({
     // Data: additive (0 / 1).
     LEDMIXER: 19
 });
+
+//Buildings:
+//  -Format: name,x,y,z,3x3rotationMatrix,io
+//  -Whole savestirng is blocks?wires?buildings?data
+//  -Inputs and outputs are in big-endian
+//  -Incoming connections are represented as 1X, and outcoming are 0X,
+//   where X is index of a block
+//  -Multiple connections to the same building input/output are separated by '+'
+//  -Buildings:
+
 
 function removeFloatingPointError(value) {
     if (Math.abs(value - Math.round(value)) < 0.01)
